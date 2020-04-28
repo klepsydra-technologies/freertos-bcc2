@@ -33,9 +33,9 @@
     FreeRTOS is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-    more details. You should have received a copy of the GNU General Public 
-    License and the FreeRTOS license exception along with FreeRTOS; if not it 
-    can be viewed here: http://www.freertos.org/a00114.html and also obtained 
+    more details. You should have received a copy of the GNU General Public
+    License and the FreeRTOS license exception along with FreeRTOS; if not it
+    can be viewed here: http://www.freertos.org/a00114.html and also obtained
     by writing to Richard Barry, contact details for whom are available on the
     FreeRTOS WEB site.
 
@@ -59,7 +59,8 @@
 extern "C" {
 #endif
 
-#include <asm-leon/leonstack.h>
+#include "leonstack.h"
+#include <bcc/bcc.h>
 
 #ifndef __ASSEMBLER__
 struct freertos_stack {
@@ -76,9 +77,9 @@ struct freertos_stack {
 #define FREERTOS_STACK_PC_OFF  (4*(8*2+2))
 #define FREERTOS_STACK_O0_OFF  (4*(8*2+3))
 
-	
+
 /*-----------------------------------------------------------
- * Port specific definitions.  
+ * Port specific definitions.
  *
  * The settings in this file configure FreeRTOS correctly for the
  * given hardware and compiler.
@@ -107,13 +108,13 @@ struct freertos_stack {
 #endif
 	#define portMAX_DELAY ( portTickType ) 0xffffffff
 #endif
-/*-----------------------------------------------------------*/	
+/*-----------------------------------------------------------*/
 
 /* Architecture specifics. */
 #define portSTACK_GROWTH			( -1 )
-#define portTICK_RATE_MS			( ( portTickType ) 1000 / configTICK_RATE_HZ )		
+#define portTICK_RATE_MS			( ( portTickType ) 1000 / configTICK_RATE_HZ )
 #define portBYTE_ALIGNMENT			8
-/*-----------------------------------------------------------*/	
+/*-----------------------------------------------------------*/
 
 
 /* Scheduler utilities. */
@@ -129,18 +130,18 @@ extern void vPortYieldFromISR( void );
 
 /* Critical section management. */
 
-#define portSET_INTERRUPT_MASK_FROM_ISR()	leonbare_disable_traps()
-#define portCLEAR_INTERRUPT_MASK_FROM_ISR(x)	leonbare_enable_traps(x);(void)x
+#define portSET_INTERRUPT_MASK_FROM_ISR()	bcc_int_disable()
+#define portCLEAR_INTERRUPT_MASK_FROM_ISR(x)	bcc_int_enable(x);(void)x
 
 
 #ifndef __ASSEMBLER__
 extern void vPortEnterCritical( void );
 extern void vPortExitCritical( void );
 #endif
-	
-#define portDISABLE_INTERRUPTS()	leonbare_disable_traps()
-#define portENABLE_INTERRUPTS()		leonbare_enable_traps(0)
-	
+
+#define portDISABLE_INTERRUPTS()	bcc_int_disable()
+#define portENABLE_INTERRUPTS()		bcc_int_enable(0)
+
 #ifndef __ASSEMBLER__
 void vTaskEnterCritical( void );
 void vTaskExitCritical( void );
