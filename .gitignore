@@ -1,3 +1,5 @@
 install/
 *.o
 *.a
+*.exe
+*.dis

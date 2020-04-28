@@ -1,9 +1,8 @@
 /* Scheduler includes. */
 #include "FreeRTOS.h"
 #include "task.h"
-//#include <asm-leon/leon.h>
-//#include <asm-leon/irq.h>
-//#include <asm-leon/time.h>
+#include <drv/timer.h>
+#include <stdio.h>
 
 #ifndef configKERNEL_INTERRUPT_PRIORITY
 	#define configKERNEL_INTERRUPT_PRIORITY 255
@@ -18,8 +17,11 @@ int  xPortScheduleHandler(struct leonbare_pt_regs *regs);
 /* Each task maintains its own interrupt status in the critical nesting variable. */
 static unsigned portBASE_TYPE uxCriticalNesting = 0xaaaaaaaa;
 
+static struct timer_priv *tdev = NULL;
+static void *sub = NULL;
+
 /* Exception handlers. */
-void xPortSysTickHandler( void );
+void xPortSysTickHandler( void *arg, int source );
 void vPortSVCHandler( void );
 /*
  * See header file for description.
@@ -48,18 +50,28 @@ extern int nestedirq;
  */
 portBASE_TYPE xPortStartScheduler( void )
 {
+	int intnum;
 
 #warning "no_inirq_check equivalent for BCC2?"
 	//no_inirq_check = 1;
-	nestedirq = 0;
+	//nestedirq = 0;
 
 	portDISABLE_INTERRUPTS();
 
 	bcc_timer_tick_init();
-	ticker_callback = (tickerhandler) xPortSysTickHandler;
-#if configUSE_PREEMPTION == 1
-	schedule_callback = (schedulehandler) xPortScheduleHandler;
-#endif
+
+	timer_autoinit();
+
+	tdev = timer_open(portTIMER_NUM);
+	intnum = timer_get_devreg(portTIMER_NUM)->interrupt;
+
+	bcc_isr_register(intnum, xPortSysTickHandler, NULL);
+	bcc_int_unmask(intnum);
+
+	sub = timer_sub_open(tdev, portTIMER_SUB);
+	timer_set_ctrl(sub, GPTIMER_CTRL_IP);
+	timer_set_reload(sub, portTIMER_RELOAD);
+	timer_set_ctrl(sub, GPTIMER_CTRL_IE | GPTIMER_CTRL_LD | GPTIMER_CTRL_RS | GPTIMER_CTRL_EN);
 
 	/* Initialise the critical nesting count ready for the first task. */
 	uxCriticalNesting = 0;
@@ -95,7 +107,7 @@ void vPortExitCritical( void )
 	}
 }
 
-void xPortSysTickHandler( void )
+void xPortSysTickHandler( void *arg, int source )
 {
 	unsigned long ulDummy, psr;
 

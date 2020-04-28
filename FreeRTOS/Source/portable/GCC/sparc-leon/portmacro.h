@@ -60,9 +60,10 @@ extern "C" {
 #endif
 
 #include "leonstack.h"
-#include <bcc/bcc.h>
 
 #ifndef __ASSEMBLER__
+#include <bcc/bcc.h>
+
 struct freertos_stack {
 	unsigned long regs[8*2];
 	unsigned long psr;
@@ -116,6 +117,9 @@ struct freertos_stack {
 #define portBYTE_ALIGNMENT			8
 /*-----------------------------------------------------------*/
 
+#define portTIMER_NUM				0
+#define portTIMER_SUB				5
+#define portTIMER_RELOAD			5000
 
 /* Scheduler utilities. */
 #ifndef __ASSEMBLER__
