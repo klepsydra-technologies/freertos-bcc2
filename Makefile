@@ -5,12 +5,12 @@ RTOS_PORT_DIR  =$(RTOS_SOURCE_DIR)/portable/GCC/sparc-leon
 RTOS_DEMO_DIR  =$(CURDIR)/$(FREERTOS)/Demo/Common
 VPATH=$(RTOS_SOURCE_DIR):$(RTOS_SOURCE_DIR)/portable/MemMang:$(RTOS_PORT_DIR):$(RTOS_DEMO_DIR)/Minimal
 MAKEMYSELF=Makefile
-PREFIX?=/opt/sparc-elf-4.4.2/
+PREFIX?=$(CURDIR)/install
 
-CC       = sparc-elf-gcc
+CC       = sparc-gaisler-elf-gcc
 CFLAGS  += -g -I . -I $(RTOS_SOURCE_DIR)/include -I $(RTOS_PORT_DIR) -I $(RTOS_DEMO_DIR)/include \
 	  -D PACK_STRUCT_END=__attribute\(\(packed\)\) -D ALIGN_STRUCT_END=__attribute\(\(aligned\(4\)\)\) \
-	  -D__leonbare__ 
+	  -D__leonbare__
 
 LDFLAGS = -L. -lfreertos
 
@@ -26,13 +26,13 @@ $(LIBOBJ):  list.o   \
 		portA.o  \
 		heap_2.o \
 		death.o
-	sparc-elf-ar cr $@ $^
+	sparc-gaisler-elf-ar cr $@ $^
 
 ex1.exe: libfreertos.a
-	sparc-elf-gcc $(CFLAGS) ex1.c -g $(LDFLAGS) -o ex1.exe ; sparc-elf-objdump -d -l -S ex1.exe  >  ex1.exe.dis
+	sparc-gaisler-elf-gcc $(CFLAGS) ex1.c -g $(LDFLAGS) -o ex1.exe ; sparc-gaisler-elf-objdump -d -l -S ex1.exe  >  ex1.exe.dis
 
 ex2.exe: libfreertos.a
-	sparc-elf-gcc $(CFLAGS) ex2.c -g $(LDFLAGS) -o ex2.exe ; sparc-elf-objdump -d -l -S ex2.exe  >  ex2.exe.dis
+	sparc-gaisler-elf-gcc $(CFLAGS) ex2.c -g $(LDFLAGS) -o ex2.exe ; sparc-gaisler-elf-objdump -d -l -S ex2.exe  >  ex2.exe.dis
 
 clean:
 	-rm *.o *.a
@@ -40,7 +40,7 @@ clean:
 examples: ex1.exe ex2.exe
 
 multi-do:
-	compiler="sparc-elf-gcc"; \
+	compiler="sparc-gaisler-elf-gcc"; \
 	  for i in `$${compiler} --print-multi-lib 2>/dev/null`; do \
 	    dir=`echo $$i | sed -e 's/;.*$$//'`; \
 	    if [ "$${dir}" = "." ]; then \
