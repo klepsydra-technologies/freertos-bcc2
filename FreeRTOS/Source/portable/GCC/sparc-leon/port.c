@@ -111,6 +111,8 @@ void xPortSysTickHandler( void *arg, int source )
 {
 	unsigned long ulDummy, psr;
 
+	timer_set_ctrl(sub, timer_get_ctrl(sub) | GPTIMER_CTRL_IP);
+
 	psr = freeos_getpsr();
 	if ((psr & PSR_PIL) != PSR_PIL){
 		freeos_error();
