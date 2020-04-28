@@ -12,7 +12,7 @@ CFLAGS  += -g -I . -I $(RTOS_SOURCE_DIR)/include -I $(RTOS_PORT_DIR) -I $(RTOS_D
 	  -D PACK_STRUCT_END=__attribute\(\(packed\)\) -D ALIGN_STRUCT_END=__attribute\(\(aligned\(4\)\)\) \
 	  -D__leonbare__
 
-LDFLAGS = -L. -lfreertos
+LDFLAGS = -L. -lfreertos -ldrv
 
 INSTALLDIR=$(PREFIX)/sparc-elf/lib/$(DESTDIR)/
 LIBOBJ=libfreertos.a

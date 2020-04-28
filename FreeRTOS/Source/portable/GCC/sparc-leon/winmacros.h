@@ -207,10 +207,10 @@
         nop; nop; nop;
 
 #define SET_WIM_CWPMIN1(psr_reg,tmp1,tmp2,tmp3,tmp4) \
-        sethi	%hi(_nwindows_min1), %##tmp1; \
+        sethi	%hi(__bcc_nwindows_min1), %##tmp1; \
 	and	%##psr_reg, SPARC_PSR_WIN_MASK, %##tmp3; \
 	mov	1, %##tmp2; \
-	ld	[ %##tmp1 + %lo(_nwindows_min1)], %##tmp1; \
+	ld	[ %##tmp1 + %lo(__bcc_nwindows_min1)], %##tmp1; \
         sll	%##tmp2, %##tmp3, %##tmp3; \
         sll	%##tmp3, 1, %##tmp4; \
         srl	%##tmp3, %##tmp1, %##tmp1; \
