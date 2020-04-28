@@ -37,7 +37,8 @@ ex2.exe: libfreertos.a
 clean:
 	-rm *.o *.a
 
-examples: ex1.exe ex2.exe
+#examples: ex1.exe ex2.exe
+examples: ex1.exe
 
 multi-do:
 	compiler="sparc-gaisler-elf-gcc"; \
