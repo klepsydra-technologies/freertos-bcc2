@@ -23,6 +23,8 @@ all:	$(LIBOBJ)
 $(LIBOBJ):  list.o   \
 		queue.o  \
 		tasks.o  \
+		timers.o  \
+		event_groups.o  \
 		port.o   \
 		portA.o  \
 		heap_2.o \
@@ -36,7 +38,7 @@ ex2.exe: libfreertos.a
 	sparc-gaisler-elf-gcc $(CFLAGS) ex2.c -g $(LDFLAGS) -o ex2.exe ; sparc-gaisler-elf-objdump -d -l -S ex2.exe  >  ex2.exe.dis
 
 clean:
-	-rm *.o *.a
+	-rm *.o *.a *.exe *.dis
 
 #examples: ex1.exe ex2.exe
 examples: ex1.exe

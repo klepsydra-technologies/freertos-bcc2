@@ -20,6 +20,11 @@ static unsigned portBASE_TYPE uxCriticalNesting = 0xaaaaaaaa;
 static struct timer_priv *tdev = NULL;
 static void *sub = NULL;
 
+/* Counts the total number of times that the high frequency timer has 'ticked'.
+This value is used by the run time stats function to work out what percentage
+of CPU time each task is taking. */
+volatile unsigned long ulHighFrequencyTimerTicks = 0UL;
+
 /* Exception handlers. */
 void xPortSysTickHandler( void *arg, int source );
 void vPortSVCHandler( void );
@@ -121,6 +126,8 @@ void xPortSysTickHandler( void *arg, int source )
 	{
 #warning "What to do if xTaskIncrementTick returns pdFALSE?"
 		xTaskIncrementTick();
+
+        ulHighFrequencyTimerTicks++;
 	}
 	portCLEAR_INTERRUPT_MASK_FROM_ISR( ulDummy );
 
@@ -146,3 +153,4 @@ __attribute__((weak)) void vApplicationMallocFailedHook( void ) {
 	printf("Fail vApplicationMallocFailedHook\n");
 	for( ;; );
 }
+
