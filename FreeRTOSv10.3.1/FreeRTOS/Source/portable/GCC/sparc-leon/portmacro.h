@@ -1,5 +1,5 @@
 /*
-    FreeRTOS V6.0.4 - Copyright (C) 2010 Real Time Engineers Ltd.
+    FreeRTOS V6.0.5 - Copyright (C) 2010 Real Time Engineers Ltd.
 
     ***************************************************************************
     *                                                                         *
@@ -51,66 +51,125 @@
     licensing and training services.
 */
 
-#ifndef FREERTOS_CONFIG_H
-#define FREERTOS_CONFIG_H
+
+#ifndef PORTMACRO_H
+#define PORTMACRO_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include "leonstack.h"
+
+#ifndef __ASSEMBLER__
+#include <bcc/bcc.h>
+
+struct freertos_stack {
+	unsigned long regs[8*2];
+	unsigned long psr;
+	unsigned long wim;
+	unsigned long pc;
+	unsigned long o0;
+};
+#endif
+#define FREERTOS_STACK_SIZE (4*(8*2+4))
+#define FREERTOS_STACK_PSR_OFF (4*(8*2))
+#define FREERTOS_STACK_WIM_OFF (4*(8*2+1))
+#define FREERTOS_STACK_PC_OFF  (4*(8*2+2))
+#define FREERTOS_STACK_O0_OFF  (4*(8*2+3))
+
 
 /*-----------------------------------------------------------
- * Application specific definitions.
+ * Port specific definitions.
  *
- * These definitions should be adjusted for your particular hardware and
- * application requirements.
+ * The settings in this file configure FreeRTOS correctly for the
+ * given hardware and compiler.
  *
- * THESE PARAMETERS ARE DESCRIBED WITHIN THE 'CONFIGURATION' SECTION OF THE
- * FreeRTOS API DOCUMENTATION AVAILABLE ON THE FreeRTOS.org WEB SITE.
- *
- * See http://www.freertos.org/a00110.html.
- *----------------------------------------------------------*/
+ * These settings should not be altered.
+ *-----------------------------------------------------------
+ */
 
-#define configUSE_PREEMPTION			1
-#define configUSE_IDLE_HOOK			0
-#define configUSE_TICK_HOOK			1
-#define configCPU_CLOCK_HZ			( ( unsigned long ) 50000000 )
-#define configTICK_RATE_HZ			( ( TickType_t ) 1000 )
-#define configMINIMAL_STACK_SIZE		( ( unsigned short ) (1024*8/4) )
-#define configTOTAL_HEAP_SIZE			( ( size_t ) ( 1024*128 ) )
-#define configMAX_TASK_NAME_LEN			( 12 )
-#define configUSE_TRACE_FACILITY		1
-#define configUSE_16_BIT_TICKS			0
-#define configIDLE_SHOULD_YIELD			1
-#define configUSE_CO_ROUTINES 			0
-#define configUSE_MUTEXES			1
-#define configCHECK_FOR_STACK_OVERFLOW		2
-#define configUSE_RECURSIVE_MUTEXES		1
-#define configQUEUE_REGISTRY_SIZE		10
-#define configUSE_MALLOC_FAILED_HOOK  		1
-#define portCRITICAL_NESTING_IN_TCB 		1
-/*#define configGENERATE_RUN_TIME_STATS	1*/
+/* Type definitions. */
+#define portCHAR		char
+#define portFLOAT		float
+#define portDOUBLE		double
+#define portLONG		long
+#define portSHORT		short
+#define portSTACK_TYPE	unsigned portLONG
+#define portBASE_TYPE	long
 
-#define configMAX_PRIORITIES		( 5 )
-#define configMAX_CO_ROUTINE_PRIORITIES ( 2 )
+#ifndef __ASSEMBLER__
+typedef portSTACK_TYPE StackType_t;
+typedef long BaseType_t;
+typedef unsigned long UBaseType_t;
+#endif
 
-/* Set the following definitions to 1 to include the API function, or zero
-to exclude the API function. */
+#if( configUSE_16_BIT_TICKS == 1 )
+#ifndef __ASSEMBLER__
+	typedef uint16_t TickType_t;
+#endif
+	#define portMAX_DELAY ( TickType_t ) 0xffff
+#else
+#ifndef __ASSEMBLER__
+	typedef uint32_t TickType_t;
+#endif
+	#define portMAX_DELAY ( TickType_t ) 0xffffffff
+#endif
+/*-----------------------------------------------------------*/
 
-#define INCLUDE_vTaskPrioritySet			1
-#define INCLUDE_uxTaskPriorityGet			1
-#define INCLUDE_vTaskDelete				1
-#define INCLUDE_vTaskCleanUpResources			0
-#define INCLUDE_vTaskSuspend				1
-#define INCLUDE_vTaskDelayUntil				1
-#define INCLUDE_vTaskDelay				1
-#define INCLUDE_uxTaskGetStackHighWaterMark		1
+/* Architecture specifics. */
+#define portSTACK_GROWTH			( -1 )
+#define portTICK_PERIOD_MS			( ( TickType_t ) 1000 / configTICK_RATE_HZ )
+#define portBYTE_ALIGNMENT			8
+/*-----------------------------------------------------------*/
+
+#define portTIMER_NUM				0
+#define portTIMER_SUB				5
+#define portTIMER_RELOAD			5000
+
+/* Scheduler utilities. */
+#ifndef __ASSEMBLER__
+extern void vPortYieldFromISR( void );
+#endif
+
+#define portYIELD()					vPortYieldFromISR()
+
+#define portEND_SWITCHING_ISR( xSwitchRequired ) if( xSwitchRequired ) vPortYieldFromISR()
+/*-----------------------------------------------------------*/
 
 
+/* Critical section management. */
 
-#define configKERNEL_INTERRUPT_PRIORITY 		( ( unsigned char ) 7 << ( unsigned char ) 5 )	/* Priority 7, or 255 as only the top three bits are implemented.  This is the lowest priority. */
-#define configMAX_SYSCALL_INTERRUPT_PRIORITY 	( ( unsigned char ) 5 << ( unsigned char ) 5 )  /* Priority 5, or 160 as only the top three bits are implemented. */
+#define portSET_INTERRUPT_MASK_FROM_ISR()	bcc_int_disable()
+#define portCLEAR_INTERRUPT_MASK_FROM_ISR(x)	bcc_int_enable(x);(void)x
 
-extern volatile unsigned long ulHighFrequencyTimerTicks;
-/* There is already a high frequency timer running - just reset its count back
-to zero. */
-/*
-#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS() ( ulHighFrequencyTimerTicks = 0UL )
-#define portGET_RUN_TIME_COUNTER_VALUE()	ulHighFrequencyTimerTicks
-*/
-#endif /* FREERTOS_CONFIG_H */
+
+#ifndef __ASSEMBLER__
+extern void vPortEnterCritical( void );
+extern void vPortExitCritical( void );
+#endif
+
+#define portDISABLE_INTERRUPTS()	bcc_int_disable()
+#define portENABLE_INTERRUPTS()		bcc_int_enable(0)
+
+#ifndef __ASSEMBLER__
+void vTaskEnterCritical( void );
+void vTaskExitCritical( void );
+#endif
+#define portENTER_CRITICAL()			vTaskEnterCritical()
+#define portEXIT_CRITICAL()				vTaskExitCritical()
+
+/*-----------------------------------------------------------*/
+
+/* Task function macros as described on the FreeRTOS.org WEB site. */
+#define portTASK_FUNCTION_PROTO( vFunction, pvParameters ) void vFunction( void *pvParameters )
+#define portTASK_FUNCTION( vFunction, pvParameters ) void vFunction( void *pvParameters )
+
+#define portNOP()
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* PORTMACRO_H */
+

@@ -1,4 +1,5 @@
-FREERTOS=FreeRTOS
+FREERTOS=FreeRTOSv10.3.1/FreeRTOS
+#FREERTOS=FreeRTOS
 #FREERTOS=FreeRTOSv7.0.2
 RTOS_SOURCE_DIR=$(CURDIR)/$(FREERTOS)/Source
 RTOS_PORT_DIR  =$(RTOS_SOURCE_DIR)/portable/GCC/sparc-leon
@@ -88,6 +89,8 @@ install-headers:
 		cp $(FREERTOS)/Source/include/$$f $(PREFIX)/sparc-elf/include/freertos/; \
 	done
 	cp FreeRTOSConfig.h $(PREFIX)/sparc-elf/include/freertos/;
+	cp $(FREERTOS)/Source/portable/GCC/sparc-leon/portmacro.h $(PREFIX)/sparc-elf/include/freertos/;
+	cp $(FREERTOS)/Source/portable/GCC/sparc-leon/leonstack.h $(PREFIX)/sparc-elf/include/freertos/;
 
 recompile:
 	make PREFIX=$(PREFIX) install-headers
