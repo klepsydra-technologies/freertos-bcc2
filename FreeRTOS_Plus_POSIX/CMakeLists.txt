@@ -46,7 +46,7 @@ link_directories(../install/sparc-elf/lib)
 #add_executable(rtems-hello src/rtems-wrap_start.S src/rtems-hello.cpp)
 add_executable(posix_demo
     main.c
-    posix_demo.c
+    demo.cpp
     lib/FreeRTOS-Plus-POSIX/source/FreeRTOS_POSIX_clock.c
     lib/FreeRTOS-Plus-POSIX/source/FreeRTOS_POSIX_mqueue.c
     lib/FreeRTOS-Plus-POSIX/source/FreeRTOS_POSIX_pthread.c
