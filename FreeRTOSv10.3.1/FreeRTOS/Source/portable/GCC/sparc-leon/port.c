@@ -19,6 +19,7 @@ static unsigned portBASE_TYPE uxCriticalNesting = 0xaaaaaaaa;
 
 static struct timer_priv *tdev = NULL;
 static void *sub = NULL;
+static int counter = 0;
 
 /* Counts the total number of times that the high frequency timer has 'ticked'.
 This value is used by the run time stats function to work out what percentage
@@ -122,18 +123,26 @@ void xPortSysTickHandler( void *arg, int source )
 	if ((psr & PSR_PIL) != PSR_PIL){
 		freeos_error();
 	}
+
 	ulDummy = portSET_INTERRUPT_MASK_FROM_ISR();
 	{
-#warning "What to do if xTaskIncrementTick returns pdFALSE?"
-		xTaskIncrementTick();
+		ulHighFrequencyTimerTicks++;
 
-        ulHighFrequencyTimerTicks++;
+#warning "What to do if xTaskIncrementTick returns pdFALSE?"
+		if (counter == 0) {
+			xTaskIncrementTick();
+		}
 	}
 	portCLEAR_INTERRUPT_MASK_FROM_ISR( ulDummy );
 
 #if configUSE_PREEMPTION == 1
-	vPortYieldFromISR();
+	if (counter == 0) {
+		vPortYieldFromISR();
+	}
 #endif
+
+	counter++;
+	counter %= 10;
 }
 
 int  xPortScheduleHandler(struct leonbare_pt_regs *regs) {
