@@ -38,9 +38,9 @@ include_directories(
     lib/FreeRTOS-Plus-POSIX/include
     lib/FreeRTOS-Plus-POSIX/include/portable
     lib/FreeRTOS-Plus-POSIX/include/portable/sparc-leon
-    ../install/sparc-elf/include/freertos
+    /opt/FreeRTOSv10.3.1-bcc2/include/freertos
 )
-link_directories(../install/sparc-elf/lib)
+link_directories(/opt/FreeRTOSv10.3.1-bcc2/lib)
 
 # Adding something we can run - Output name matches target name
 #add_executable(rtems-hello src/rtems-wrap_start.S src/rtems-hello.cpp)
