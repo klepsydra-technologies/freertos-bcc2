@@ -10,8 +10,9 @@ PREFIX?=/opt/FreeRTOSv10.3.1-bcc2
 
 CC       = sparc-gaisler-elf-gcc
 CFLAGS  += -g -I . -I $(RTOS_SOURCE_DIR)/include -I $(RTOS_PORT_DIR) -I $(RTOS_DEMO_DIR)/include \
-	  -D PACK_STRUCT_END=__attribute\(\(packed\)\) -D ALIGN_STRUCT_END=__attribute\(\(aligned\(4\)\)\) \
-	  -D__leonbare__
+		-mcpu=leon3 -qbsp=leon3 -pedantic -Wall -O3
+#	  -D PACK_STRUCT_END=__attribute\(\(packed\)\) -D ALIGN_STRUCT_END=__attribute\(\(aligned\(4\)\)\) \
+#	  -D__leonbare__
 
 LDFLAGS = -L. -lfreertos -ldrv
 

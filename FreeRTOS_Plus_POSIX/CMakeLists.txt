@@ -39,8 +39,11 @@ include_directories(
     lib/FreeRTOS-Plus-POSIX/include/portable
     lib/FreeRTOS-Plus-POSIX/include/portable/sparc-leon
     /opt/FreeRTOSv10.3.1-bcc2/include/freertos
+    /opt/klepsydra/thirdparties/include
+    /home/fri/klepsydra/thread-pool-cpp/include
 )
 link_directories(/opt/FreeRTOSv10.3.1-bcc2/lib)
+add_definitions(-D__freertos__=true)
 
 # Adding something we can run - Output name matches target name
 #add_executable(rtems-hello src/rtems-wrap_start.S src/rtems-hello.cpp)
