@@ -1,0 +1,6 @@
+To compile/install FreeRTOS:
+
+sudo make install-headers
+make multi-all
+sudo make multi-install
+
