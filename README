@@ -30,6 +30,9 @@ In your projects you will have to add the include dirs:
 Add link directory:
 /opt/FreeRTOSv10.3.1-bcc2/lib
 
+Add the definition:
+-D_GCC_MULTITHREAD_FREERTOS_ENABLE
+
 Link the libraries:
 freertos drv freertos-cpp11
 
