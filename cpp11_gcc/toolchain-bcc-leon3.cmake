@@ -1,0 +1,12 @@
+set(CMAKE_SYSTEM_NAME Generic)
+set(CMAKE_SYSTEM_PROCESSOR arm)
+
+set(tools /opt/bcc-2.1.1-gcc)
+set(CMAKE_C_COMPILER ${tools}/bin/sparc-gaisler-elf-gcc)
+set(CMAKE_CXX_COMPILER ${tools}/bin/sparc-gaisler-elf-g++)
+
+#set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+#set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+#set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+#set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
+
