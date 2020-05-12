@@ -1,6 +1,35 @@
-To compile/install FreeRTOS:
+STEP 1: compile/install FreeRTOS:
 
 sudo make install-headers
 make multi-all
 sudo make multi-install
+
+STEP 2: Patch gcc:
+
+(Don't use this command as-is, adapt for the path of gthr.sed)
+
+cd /opt/bcc-2.1.1-gcc
+find . -name 'gthr.h' -exec sudo sed -i.bak -f ~/gthr.sed '{}' ';'
+
+STEP 3: compile/install C++11 support for FreeRTOS:
+
+cd cpp11_gcc
+mkdir build
+cd build
+cmake .. -DCMAKE_TOOLCHAIN_FILE=../toolchain-bcc-leon3.cmake
+make
+sudo make install
+
+STEP4: Profit!
+
+In your projects you will have to add the include dirs:
+
+/opt/FreeRTOSv10.3.1-bcc2/include/freertos
+/opt/FreeRTOSv10.3.1-bcc2/include/cpp11_gcc
+
+Add link directory:
+/opt/FreeRTOSv10.3.1-bcc2/lib
+
+Link the libraries:
+freertos drv freertos-cpp11
 
