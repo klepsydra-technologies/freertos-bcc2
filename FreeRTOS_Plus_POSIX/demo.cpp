@@ -8,6 +8,9 @@
 
 #include "posix_demo.h"
 
+#include <future>
+#include "thread_pool.hpp"
+
 static const int num_threads = 2;
 
 extern "C" void lambda_calling_thread(void *pvParameters);
@@ -68,6 +71,7 @@ void lambda_calling_thread(void *pvParameters) {
     xSemaphoreGive(s);
 }
 
+#if 0
 static void launch_thread() {
     //std::function<void()> helloWorldLambda = [](){printf("Hello world! from thread\n");};
     auto helloWorldLambda = [](){printf("Hello world! from thread\n");};
@@ -81,10 +85,22 @@ static void launch_thread() {
         "task_name",
         configMINIMAL_STACK_SIZE,
         reinterpret_cast<void*>(x),
-        tskIDLE_PRIORITY + 1,
+        tskIDLE_PRIORITY + 3,
         NULL
     );
 }
+#endif // 0
+#if 1
+static void launch_thread() {
+    printf("About to launch the thread pool\n");
+    auto helloWorldLambda = [](){printf("Hello world! from thread\n");};
+    tp::ThreadPool pool;
+    vTaskDelay(1);
+    bool post = pool.tryPost(helloWorldLambda);
+    vTaskDelay(1);
+    printf("Tried posting task: Success = %b", post);
+}
+#endif // 0
 
 void vStartPOSIXDemo(void *pvParameters) {
     s = xSemaphoreCreateBinary();

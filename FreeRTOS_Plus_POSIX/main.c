@@ -54,7 +54,7 @@
 #include "posix_demo.h"
 
 /* Demo task priority */
-#define mainPOSIX_DEMO_PRIORITY    ( tskIDLE_PRIORITY + 4 )
+#define mainPOSIX_DEMO_PRIORITY    ( tskIDLE_PRIORITY + 1 )
 
 /*-----------------------------------------------------------*/
 
