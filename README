@@ -1,4 +1,13 @@
+STEP 0. BCC install
+
+cd ~/Downloads
+wget https://www.gaisler.com/anonftp/bcc2/bin/bcc-2.1.1-gcc-linux64.tar.xz
+tar xvf bcc-2.1.1-gcc-linux64.tar.xz
+sudo mv bcc-2.1.1-gcc /opt
+
 STEP 1: compile/install FreeRTOS:
+
+From the cloned repo top dir:
 
 sudo make install-headers
 make multi-all
@@ -9,7 +18,7 @@ STEP 2: Patch gcc:
 (Don't use this command as-is, adapt for the path of gthr.sed)
 
 cd /opt/bcc-2.1.1-gcc
-find . -name 'gthr.h' -exec sudo sed -i.bak -f ~/gthr.sed '{}' ';'
+find . -name 'gthr.h' -exec sudo sed -i.bak -f [CLONED_REPO_DIR]/gthr.sed '{}' ';'
 
 STEP 3: compile/install C++11 support for FreeRTOS:
 

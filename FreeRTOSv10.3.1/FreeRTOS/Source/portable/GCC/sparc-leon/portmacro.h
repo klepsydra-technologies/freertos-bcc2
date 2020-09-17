@@ -124,7 +124,7 @@ typedef unsigned long UBaseType_t;
 /*-----------------------------------------------------------*/
 
 #define portTIMER_NUM				0
-#define portTIMER_SUB				5
+#define portTIMER_SUB				0
 #define portTIMER_RELOAD			500
 
 /* Scheduler utilities. */

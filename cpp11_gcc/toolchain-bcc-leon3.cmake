@@ -1,5 +1,5 @@
 set(CMAKE_SYSTEM_NAME Generic)
-set(CMAKE_SYSTEM_PROCESSOR arm)
+set(CMAKE_SYSTEM_PROCESSOR leon3)
 
 set(tools /opt/bcc-2.1.1-gcc)
 set(CMAKE_C_COMPILER ${tools}/bin/sparc-gaisler-elf-gcc)

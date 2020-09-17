@@ -3,3 +3,4 @@ install/
 *.a
 *.exe
 *.dis
+**/build

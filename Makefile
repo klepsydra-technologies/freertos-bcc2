@@ -8,7 +8,9 @@ VPATH=$(RTOS_SOURCE_DIR):$(RTOS_SOURCE_DIR)/portable/MemMang:$(RTOS_PORT_DIR):$(
 MAKEMYSELF=Makefile
 PREFIX?=/opt/FreeRTOSv10.3.1-bcc2
 
-CC       = sparc-gaisler-elf-gcc
+BCC_BIN_DIR=/opt/bcc-2.1.1-gcc/bin
+
+CC       = ${BCC_BIN_DIR}/sparc-gaisler-elf-gcc
 CFLAGS  += -g -I . -I $(RTOS_SOURCE_DIR)/include -I $(RTOS_PORT_DIR) -I $(RTOS_DEMO_DIR)/include \
 		-mcpu=leon3 -qbsp=leon3 -pedantic -Wall -O3
 #	  -D PACK_STRUCT_END=__attribute\(\(packed\)\) -D ALIGN_STRUCT_END=__attribute\(\(aligned\(4\)\)\) \
@@ -30,13 +32,13 @@ $(LIBOBJ):  list.o   \
 		portA.o  \
 		heap_2.o \
 		death.o
-	sparc-gaisler-elf-ar cr $@ $^
+	${BCC_BIN_DIR}/sparc-gaisler-elf-ar cr $@ $^
 
 ex1.exe: libfreertos.a
-	sparc-gaisler-elf-gcc $(CFLAGS) ex1.c -g $(LDFLAGS) -o ex1.exe ; sparc-gaisler-elf-objdump -d -l -S ex1.exe  >  ex1.exe.dis
+	${CC} $(CFLAGS) ex1.c -g $(LDFLAGS) -o ex1.exe ; ${BCC_BIN_DIR}/sparc-gaisler-elf-objdump -d -l -S ex1.exe  >  ex1.exe.dis
 
 ex2.exe: libfreertos.a
-	sparc-gaisler-elf-gcc $(CFLAGS) ex2.c -g $(LDFLAGS) -o ex2.exe ; sparc-gaisler-elf-objdump -d -l -S ex2.exe  >  ex2.exe.dis
+	${CC} $(CFLAGS) ex2.c -g $(LDFLAGS) -o ex2.exe ; ${BCC_BIN_DIR}/sparc-gaisler-elf-objdump -d -l -S ex2.exe  >  ex2.exe.dis
 
 clean:
 	-rm *.o *.a *.exe *.dis
@@ -45,7 +47,7 @@ clean:
 examples: ex1.exe
 
 multi-do:
-	compiler="sparc-gaisler-elf-gcc"; \
+	compiler="${CC}"; \
 	  for i in `$${compiler} --print-multi-lib 2>/dev/null`; do \
 	    dir=`echo $$i | sed -e 's/;.*$$//'`; \
 	    if [ "$${dir}" = "." ]; then \
